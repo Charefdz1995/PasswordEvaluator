@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load staticfiles %}
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Application to evaluate password vs a simple brute force algorithm">
+    <meta name="author" content="Cherrad Charef Eddine">
+
+    <title>PasswordGuesser</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css'%}" rel="stylesheet">
+
+    <!-- Custom fonts for this template -->
+    <link href="{% static 'vendor/font-awesome/css/font-awesome.min.css'%}" rel="stylesheet" type="text/css">
+    <link href="{% static 'vendor/simple-line-icons/css/simple-line-icons.css'%}" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="{% static 'progress.css'%}">
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+
+    <!-- Custom styles for this template -->
+    <link href="{% static 'css/landing-page.min.css'%}" rel="stylesheet">
+
+  </head>
+
+  <body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-light bg-light static-top">
+      <div class="container">
+        <a class="navbar-brand" href="{% url 'MainApp'%}">PasswdEvaluator</a>
+        <span id="timer" class="navbar-brand">05:00</span>
+      </div>
+    </nav>
+
+    <!-- Masthead -->
+    <header class="masthead text-white text-center">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-xl-9 mx-auto">
+            <h1 class="mb-5">Evaluate your password</h1>
+          </div>
+          <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
+            <form  method="POST">
+              {% csrf_token%}
+              <div class="form-row">
+                <div class="col-12 col-md-9 mb-2 mb-md-0">
+                  {{ form.passwd }}
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="col-12 col-md-3">
+            <button id="evaluate" onclick="move()" class="btn btn-block btn-lg btn-success">Evaluate</button>
+          </div>  
+        </div>
+
+        <div id="progress">
+          <div id="myBar"></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="{% static 'vendor/jquery/jquery.min.js'%}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js'%}"></script>
+    <script type="text/javascript">
+    $("#evaluate").click(function () {
+      var passwd = $("#id_passwd").val();
+      if (passwd==''){
+        alert('there is no password'); 
+        window.location.reload() 
+      } else {
+        document.getElementById('timer').innerHTML =
+          05 + ":" + 00;
+        $.ajax({
+          url: '/ajax/evaluate/',
+          data: {
+            'password': passwd
+          },
+          dataType: 'json',
+          success: function (data) {
+            alert(data.result);
+            window.location.reload();
+            }
+        });
+        startTimer();
+        }
+      });
+    </script>
+    <script type="text/javascript">
+
+
+        function startTimer() {
+
+            var presentTime = document.getElementById('timer').innerHTML;
+            var timeArray = presentTime.split(/[:]+/);
+            var m = timeArray[0];
+            var s = checkSecond((timeArray[1] - 1));
+            if(s==59){m=m-1}
+              if(m<0){
+                alert('Your password is enough good');
+                $.ajax({
+                url: '/ajax/evaluate/',
+                data: {
+                'break': 'true'
+                },
+                dataType: 'json',
+                success: function (data) {
+                    alert(data.result);
+                    window.location.reload();
+                  }
+        });
+                window.location.reload();
+                }
+
+                document.getElementById('timer').innerHTML =
+                  m + ":" + s;
+                  setTimeout(startTimer, 1000);
+                  return false ;
+                }
+        var elem = document.getElementById("myBar");   
+        var width = 0;
+        function frame() {
+          if (width >= 100) {
+          width = 0 ; 
+          clearInterval(id);
+        } else {
+          width++; 
+          elem.style.width = width + '%'; 
+          }
+        }
+        function checkSecond(sec) {
+          var id = setInterval(frame, 5000);
+          if (sec < 10 && sec >= 0) {sec = "0" + sec}; // add zero in front of numbers < 10
+          if (sec < 0) {sec = "59"};
+            return sec;
+            }
+    </script>
+
+  </body>
+
+</html>
