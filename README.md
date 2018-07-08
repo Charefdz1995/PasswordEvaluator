@@ -35,10 +35,7 @@ Start the server by
 ```
  python3 manage.py startserver
 ```
-
-
-Get into your application : [Localhost](127.0.0.0:8000)
-
+Your can see in your command prompt how you can open your application 
 
 ## Built With
 
