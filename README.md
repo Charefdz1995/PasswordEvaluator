@@ -37,7 +37,7 @@ Start the server by
 ```
 
 
-Get into your application : *[Localhost](127.0.0.0:8000)
+Get into your application : [Localhost](127.0.0.0:8000)
 
 
 ## Built With
