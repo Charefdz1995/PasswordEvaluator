@@ -33,13 +33,12 @@ def guess_password(real):
     global break_loop
     chars = string.printable
     attempts = 0
-    for password_length in range(1, 9):
-        for guess in itertools.product(chars, repeat=password_length):
-            attempts += 1
-            guess = ''.join(guess)
-            if guess == real:
-                return guess,attempts
-                break
-            if break_loop == "true":
-                break
-            print(guess , attempts)
+    for guess in itertools.product(chars, repeat=len(real)):
+        attempts += 1
+        guess = ''.join(guess)
+        if guess == real:
+            return guess,attempts
+            break
+        if break_loop == "true":
+            break
+        print(guess , attempts)
